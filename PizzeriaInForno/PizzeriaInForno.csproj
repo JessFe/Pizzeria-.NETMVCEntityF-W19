@@ -137,10 +137,13 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\DettaglioCarrello.cs" />
     <Compile Include="Models\DettagliOrdini.cs" />
+    <Compile Include="Models\Login.cs" />
     <Compile Include="Models\ModelDbContext.cs" />
     <Compile Include="Models\Ordini.cs" />
     <Compile Include="Models\Prodotti.cs" />
+    <Compile Include="Models\SchedaOrdine.cs" />
     <Compile Include="Models\Utenti.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -215,6 +218,10 @@
     <Content Include="Views\DettagliOrdini\Details.cshtml" />
     <Content Include="Views\DettagliOrdini\Edit.cshtml" />
     <Content Include="Views\DettagliOrdini\Index.cshtml" />
+    <Content Include="Views\Home\Login.cshtml" />
+    <Content Include="Views\Prodotti\Catalogo.cshtml" />
+    <Content Include="Views\Ordini\Riepilogo.cshtml" />
+    <Content Include="Views\Ordini\ConfermaOrdine.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

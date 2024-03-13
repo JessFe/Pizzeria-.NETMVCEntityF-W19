@@ -15,7 +15,8 @@ namespace PizzeriaInForno.Controllers
         // GET: Prodotti
         public ActionResult Index()
         {
-            return View(db.Prodotti.ToList());
+            var prodOrdineAlfabetico = db.Prodotti.OrderBy(p => p.NomeProd).ToList();
+            return View(prodOrdineAlfabetico);
         }
 
         // GET: Prodotti/Details/5
@@ -54,7 +55,8 @@ namespace PizzeriaInForno.Controllers
                     var path = Path.Combine(Server.MapPath("~/Content/assets/img"), fileName);
                     file.SaveAs(path);
 
-                    prodotti.Foto = "~/Content/assets/img/" + fileName;
+                    //salva il nome del file nel database
+                    prodotti.Foto = fileName;
                 }
 
                 db.Prodotti.Add(prodotti);
@@ -130,5 +132,12 @@ namespace PizzeriaInForno.Controllers
             }
             base.Dispose(disposing);
         }
+
+        public ActionResult Catalogo()
+        {
+            var prodotti = db.Prodotti.ToList();
+            return View(prodotti);
+        }
+
     }
 }

@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using PizzeriaInForno.Models;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using PizzeriaInForno.Models;
 
 namespace PizzeriaInForno.Controllers
 {
@@ -46,16 +42,17 @@ namespace PizzeriaInForno.Controllers
         // Per altri dettagli, vedere https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "IDUtente,Username,Password,IsAdmin,Nome,Cognome,Email,Tel")] Utenti utenti)
+        public ActionResult Create([Bind(Include = "Username,Password,Nome,Cognome,Email,Tel")] Utenti utente)
         {
             if (ModelState.IsValid)
             {
-                db.Utenti.Add(utenti);
+                utente.IsAdmin = false; // Assicura che l'utente non sia un amministratore
+                db.Utenti.Add(utente);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Login", "Home");
             }
 
-            return View(utenti);
+            return View(utente);
         }
 
         // GET: Utenti/Edit/5

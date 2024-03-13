@@ -18,3 +18,37 @@ select,
 textarea {
     max-width: 280px;
 }
+
+.text-smallcaps {
+    font-variant: small-caps;
+    letter-spacing: 1px;
+}
+
+.bg-cst-red {
+    background-color: #c42033;
+}
+
+.text-cst-red {
+    color: #c42033;
+}
+
+.btn-cst-red {
+    background-color: #c42033;
+    color: white;
+}
+
+.pricetag {
+    background-color: #FeC237;
+    right: -7px;
+}
+
+.scale:hover {
+    scale: 1.05;
+    transition: 0.5s;
+    box-shadow: 0 0 7px #c4203377 !important;
+    border: 1px solid #c4203377;
+}
+
+.scale {
+    transition: 0.3s;
+}

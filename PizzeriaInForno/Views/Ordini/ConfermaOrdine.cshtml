@@ -1,0 +1,31 @@
+﻿@model PizzeriaInForno.Models.Ordini
+
+@{
+    ViewBag.Title = "Conferma dell'Ordine";
+}
+
+<h2>Conferma dell'Ordine</h2>
+
+<div class="thank-you">
+    <p>Grazie per il tuo ordine, @Model.Utenti.Nome!</p>
+    <p>Un riepilogo del tuo ordine:</p>
+
+    <div>
+        <strong>Indirizzo di spedizione:</strong> @Model.Indirizzo
+    </div>
+    <div>
+        <strong>Note:</strong> @Model.Note
+    </div>
+
+    <h3>Articoli Ordinati:</h3>
+    <ul>
+        @foreach (var item in Model.DettagliOrdini)
+        {
+            <li>@item.Prodotti.NomeProd - Quantità: @item.Quantita - Prezzo: @item.Prodotti.Prezzo €</li>
+        }
+    </ul>
+
+    <div>
+        <strong>Totale Ordine:</strong> @Model.DettagliOrdini.Sum(item => item.Quantita * item.Prodotti.Prezzo) €
+    </div>
+</div>

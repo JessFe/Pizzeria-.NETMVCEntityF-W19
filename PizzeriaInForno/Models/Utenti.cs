@@ -1,10 +1,8 @@
 namespace PizzeriaInForno.Models
 {
-    using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using System.Data.Entity.Spatial;
 
     [Table("Utenti")]
     public partial class Utenti
@@ -25,6 +23,14 @@ namespace PizzeriaInForno.Models
         [Required]
         [StringLength(50)]
         public string Password { get; set; }
+
+        // validazione password (per la modifica nell'edit utente)
+        // "NotMapped" indica che la proprietà non è mappata a una colonna del database, risolve l'errore in fase login
+        //[NotMapped]
+        //[DataType(DataType.Password)]
+        //[Display(Name = "Conferma password")]
+        //[Compare("Password", ErrorMessage = "La password e la conferma password non corrispondono.")]
+        //public string ConfirmPassword { get; set; }
 
         public bool? IsAdmin { get; set; }
 

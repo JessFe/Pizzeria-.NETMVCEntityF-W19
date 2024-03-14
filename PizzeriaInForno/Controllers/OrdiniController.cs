@@ -144,9 +144,21 @@ namespace PizzeriaInForno.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Ordini ordini = db.Ordini.Find(id);
-            db.Ordini.Remove(ordini);
-            db.SaveChanges();
+            Ordini ordini = db.Ordini.Include(o => o.DettagliOrdini).FirstOrDefault(o => o.IDOrdine == id);
+
+            if (ordini != null)
+            {
+                // Elimina prima tutti i dettagli ordini associati
+                foreach (var dettaglioOrdine in ordini.DettagliOrdini.ToList())
+                {
+                    db.DettagliOrdini.Remove(dettaglioOrdine);
+                }
+
+                // Ora è possibile eliminare l'ordine
+                db.Ordini.Remove(ordini);
+                db.SaveChanges();
+            }
+
             return RedirectToAction("Index");
         }
 

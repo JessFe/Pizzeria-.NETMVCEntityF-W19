@@ -46,7 +46,8 @@ namespace PizzeriaInForno.Controllers
                     Session["Username"] = user.Username;
                     Session["IsAdmin"] = user.IsAdmin;
 
-                    if ((bool)user.IsAdmin)
+                    // Uso GetValueOrDefault() per evitare l'errore su un nullable bool
+                    if (user.IsAdmin.GetValueOrDefault())
                     {
                         return RedirectToAction("Index", "Prodotti");
                     }

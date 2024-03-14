@@ -23,7 +23,8 @@ namespace PizzeriaInForno.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Utenti utenti = db.Utenti.Find(id);
+            // Include per caricare anche gli ordini dell'utente
+            Utenti utenti = db.Utenti.Include(u => u.Ordini).FirstOrDefault(u => u.IDUtente == id);
             if (utenti == null)
             {
                 return HttpNotFound();
@@ -81,7 +82,7 @@ namespace PizzeriaInForno.Controllers
             {
                 db.Entry(utenti).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", new { id = utenti.IDUtente });
             }
             return View(utenti);
         }

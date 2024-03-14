@@ -26,13 +26,6 @@
             @Html.DisplayFor(model => model.Password)
         </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.IsAdmin)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.IsAdmin)
-        </dd>
 
         <dt>
             @Html.DisplayNameFor(model => model.Nome)
@@ -68,6 +61,44 @@
 
     </dl>
 </div>
+
+<h2>Ordini effettuati</h2>
+@if (Model.Ordini != null && Model.Ordini.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID Ordine</th>
+                <th>Data Ordine</th>
+                <th>Indirizzo</th>
+                <th>Stato</th>
+                <th>Totale</th>
+                <th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ordine in Model.Ordini)
+            {
+                <tr>
+                    <td>@ordine.IDOrdine</td>
+                    <td>@ordine.DataOrdine</td>
+                    <td>@ordine.Indirizzo</td>
+                    <td>@(ordine.Evaso.HasValue && ordine.Evaso.Value ? "Evaso" : "In attesa")</td>
+                    <td>@ordine.DettagliOrdini.Sum(d => d.Quantita * d.Prodotti.Prezzo) €</td>
+                    <td>
+                        @Html.ActionLink("Dettagli", "Details", "Ordini", new { id = ordine.IDOrdine }, new { @class = "btn btn-info" })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Nessun ordine effettuato.</p>
+}
+
+
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.IDUtente }) |
     @Html.ActionLink("Back to List", "Index")

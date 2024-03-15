@@ -14,6 +14,7 @@ namespace PizzeriaInForno.Controllers
         private ModelDbContext db = new ModelDbContext();
 
         // GET: Ordini
+        // Mostra tutti gli ordini, con quelli non evasi in cima
         [Authorize(Roles = "Admin")]
         public ActionResult Index()
         {
@@ -36,6 +37,7 @@ namespace PizzeriaInForno.Controllers
         }
 
         // GET Ordini/Evaso/5
+        // Inverte lo stato di evasione dell'ordine
         [Authorize(Roles = "Admin")]
         public ActionResult Evaso(int id)
         {
@@ -53,7 +55,8 @@ namespace PizzeriaInForno.Controllers
             return HttpNotFound();
         }
 
-        // GET: Ordini/Details/5        
+        // GET: Ordini/Details/5
+        // Mostra i dettagli di un ordine
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -94,6 +97,7 @@ namespace PizzeriaInForno.Controllers
         }
 
         // GET: Ordini/Edit/5
+        // Mostra la vista di modifica di un ordine
         [Authorize(Roles = "Admin")]
         public ActionResult Edit(int? id)
         {
@@ -113,6 +117,7 @@ namespace PizzeriaInForno.Controllers
         // POST: Ordini/Edit/5
         // Per la protezione da attacchi di overposting, abilitare le proprietà a cui eseguire il binding. 
         // Per altri dettagli, vedere https://go.microsoft.com/fwlink/?LinkId=317598.
+        // Modifica un ordine
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
@@ -129,6 +134,7 @@ namespace PizzeriaInForno.Controllers
         }
 
         // GET: Ordini/Delete/5
+        // Mostra la vista di eliminazione di un ordine
         [Authorize(Roles = "Admin")]
         public ActionResult Delete(int? id)
         {
@@ -145,6 +151,7 @@ namespace PizzeriaInForno.Controllers
         }
 
         // POST: Ordini/Delete/5
+        // Elimina un ordine
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
@@ -159,7 +166,7 @@ namespace PizzeriaInForno.Controllers
                     db.DettagliOrdini.Remove(dettaglioOrdine);
                 }
 
-                // Ora è possibile eliminare l'ordine
+                // Ora si può eliminare l'ordine
                 db.Ordini.Remove(ordini);
                 db.SaveChanges();
             }
@@ -176,12 +183,15 @@ namespace PizzeriaInForno.Controllers
             base.Dispose(disposing);
         }
 
-
+        // GET: Ordini/AggiungiAlCarrello
+        // Aggiunge un prodotto al carrello
         [HttpPost]
         public ActionResult AggiungiAlCarrello(int prodottoId, int quantita)
         {
+            // Ottiene il carrello dalla sessione
             var carrello = Session["Carrello"] as List<DettaglioCarrello> ?? new List<DettaglioCarrello>();
 
+            // Ottiene il prodotto dal database
             var prodotto = db.Prodotti.Find(prodottoId);
             if (prodotto != null)
             {
@@ -193,6 +203,7 @@ namespace PizzeriaInForno.Controllers
                     Prezzo = prodotto.Prezzo
                 };
 
+                // Aggiunge il prodotto al carrello
                 carrello.Add(dettaglioCarrello);
                 Session["Carrello"] = carrello;
             }
@@ -203,15 +214,18 @@ namespace PizzeriaInForno.Controllers
 
 
         // GET: Ordini/Riepilogo
+        // Mostra il riepilogo
         public ActionResult Riepilogo()
         {
+            // Ottiene il carrello dalla sessione
             var carrello = Session["Carrello"] as List<PizzeriaInForno.Models.DettaglioCarrello>;
+            // Se il carrello è vuoto, reindirizza alla pagina del catalogo
             if (carrello == null || !carrello.Any())
             {
-                // Gestisci il caso in cui il carrello è vuoto
                 return RedirectToAction("Catalogo", "Prodotti");
             }
 
+            // Crea un modello per la vista
             var model = new SchedaOrdine
             {
                 Articoli = carrello
@@ -222,6 +236,7 @@ namespace PizzeriaInForno.Controllers
         }
 
         // POST: Ordini/Conferma
+        // Conferma l'ordine
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Conferma(string indirizzo, string note)
@@ -229,6 +244,7 @@ namespace PizzeriaInForno.Controllers
             // Ottiene il carrello dalla sessione
             var carrello = Session["Carrello"] as List<DettaglioCarrello>;
 
+            // Se il carrello non è vuoto, crea un nuovo ordine e salvalo nel database
             if (carrello != null && carrello.Any())
             {
                 Ordini nuovoOrdine = new Ordini
@@ -264,14 +280,19 @@ namespace PizzeriaInForno.Controllers
             return View("Riepilogo", carrello);
         }
 
+        // GET: Ordini/ConfermaOrdine/5
+        // Mostra la vista di conferma dell'ordine
         public ActionResult ConfermaOrdine(int id)
         {
+            //  Ottiene l'ordine dal database
             var ordine = db.Ordini.Include(o => o.Utenti).Include(o => o.DettagliOrdini.Select(d => d.Prodotti)).FirstOrDefault(o => o.IDOrdine == id);
+            // Se l'ordine non esiste, restituisci un errore 404
             if (ordine == null)
             {
                 return HttpNotFound();
             }
 
+            // Calcola il tempo stimato di consegna
             int tempoConsegnaBase = 30;
             int tempoExtraPerQuantita = 0;
             int quantitaTotale = ordine.DettagliOrdini.Sum(d => d.Quantita);
@@ -294,19 +315,21 @@ namespace PizzeriaInForno.Controllers
 
             int tempoStimatoConsegna = Math.Max(tempoConsegnaBase, tempoMassimoPreparazione) + tempoExtraPerQuantita;
 
-            System.Diagnostics.Debug.WriteLine($"Tempo stimato consegna: {tempoStimatoConsegna}");
-
             // Passa il tempo stimato alla vista
             ViewBag.TempoStimatoConsegna = tempoStimatoConsegna;
 
             return View(ordine);
         }
 
+        // POST: Ordini/AggiornaCarrello
+        // Aggiorna il carrello
         [HttpPost]
         public ActionResult AggiornaCarrello(SchedaOrdine model)
         {
+            // Ottiene il carrello
             var carrelloAggiornato = new List<DettaglioCarrello>();
 
+            // Per ogni articolo cerca il prodotto nel database e aggiungilo al carrello
             foreach (var articolo in model.Articoli)
             {
                 var prodotto = db.Prodotti.Find(articolo.IDProdotto);
@@ -321,15 +344,18 @@ namespace PizzeriaInForno.Controllers
                     });
                 }
             }
-
+            // Aggiorna il carrello nella sessione
             Session["Carrello"] = carrelloAggiornato;
 
             return RedirectToAction("Riepilogo");
         }
 
+        // POST: Ordini/RimuoviDalCarrello
+        // Rimuove un articolo dal carrello
         [HttpPost]
         public ActionResult RimuoviDalCarrello(int index)
         {
+            // Ottiene il carrello dalla sessione e rimuove l'articolo
             var carrello = Session["Carrello"] as List<DettaglioCarrello>;
             if (carrello != null && index >= 0 && index < carrello.Count)
             {
@@ -340,6 +366,8 @@ namespace PizzeriaInForno.Controllers
             return RedirectToAction("Riepilogo");
         }
 
+        // GET: Ordini/Stats
+        // Mostra i report per gli amministratori (pagina di chiamate asincrone)
         [Authorize(Roles = "Admin")]
         public ActionResult Stats()
         {
@@ -348,6 +376,8 @@ namespace PizzeriaInForno.Controllers
 
         // Chiamate asincrone per ottenere i report
 
+
+        // Ottiene il numero totale di ordini evasi
         public JsonResult GetTotalOrdersEvasi()
         {
             var totalOrdersEvasi = db.Ordini
@@ -356,6 +386,7 @@ namespace PizzeriaInForno.Controllers
             return Json(totalOrdersEvasi, JsonRequestBehavior.AllowGet);
         }
 
+        // Ottiene il numero totale di ordini evasi in una data specifica
         public JsonResult GetTotalOrders(DateTime date)
         {
             var totalOrders = db.Ordini
@@ -364,6 +395,7 @@ namespace PizzeriaInForno.Controllers
             return Json(totalOrders, JsonRequestBehavior.AllowGet);
         }
 
+        // Ottiene il totale degli incassi in una data specifica
         public JsonResult GetTotalEarnings(DateTime date)
         {
             var totalEarnings = db.Ordini

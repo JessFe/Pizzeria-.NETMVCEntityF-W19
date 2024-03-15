@@ -10,9 +10,11 @@ namespace PizzeriaInForno.Controllers
     [Authorize]
     public class ProdottiController : Controller
     {
+        // ModelDbContext è la classe che rappresenta il database
         private ModelDbContext db = new ModelDbContext();
 
         // GET: Prodotti
+        // Mostra la lista dei prodotti in ordine alfabetico
         [Authorize(Roles = "Admin")]
         public ActionResult Index()
         {
@@ -21,6 +23,7 @@ namespace PizzeriaInForno.Controllers
         }
 
         // GET: Prodotti/Details/5
+        // Mostra i dettagli di un prodotto
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -45,13 +48,16 @@ namespace PizzeriaInForno.Controllers
         // POST: Prodotti/Create
         // Per la protezione da attacchi di overposting, abilitare le proprietà a cui eseguire il binding. 
         // Per altri dettagli, vedere https://go.microsoft.com/fwlink/?LinkId=317598.
+        // Crea un nuovo prodotto
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
         public ActionResult Create([Bind(Include = "IDProdotto,NomeProd,Prezzo,ConsMin,Ingredienti")] Prodotti prodotti, HttpPostedFileBase file)
         {
+            // Verifica la validità del modello
             if (ModelState.IsValid)
             {
+                // Verifica se un file è stato caricato
                 if (file != null && file.ContentLength > 0)
                 {
                     var fileName = Path.GetFileName(file.FileName);
@@ -62,6 +68,7 @@ namespace PizzeriaInForno.Controllers
                     prodotti.Foto = fileName;
                 }
 
+                // Aggiunge il prodotto al database
                 db.Prodotti.Add(prodotti);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -71,6 +78,7 @@ namespace PizzeriaInForno.Controllers
         }
 
         // GET: Prodotti/Edit/5
+        // Mostra il form per modificare un prodotto
         [Authorize(Roles = "Admin")]
         public ActionResult Edit(int? id)
         {
@@ -89,13 +97,16 @@ namespace PizzeriaInForno.Controllers
         // POST: Prodotti/Edit/5
         // Per la protezione da attacchi di overposting, abilitare le proprietà a cui eseguire il binding. 
         // Per altri dettagli, vedere https://go.microsoft.com/fwlink/?LinkId=317598.
+        // Modifica un prodotto
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
         public ActionResult Edit([Bind(Include = "IDProdotto,NomeProd,Prezzo,ConsMin,Ingredienti")] Prodotti prodotti, HttpPostedFileBase file)
         {
+            // Verifica la validità del modello
             if (ModelState.IsValid)
             {
+                // Cerca il prodotto da modificare
                 var prodottoToUpdate = db.Prodotti.Find(prodotti.IDProdotto);
                 if (prodottoToUpdate != null)
                 {

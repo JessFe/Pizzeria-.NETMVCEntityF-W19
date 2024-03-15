@@ -44,12 +44,12 @@
                 <div class="d-flex justify-content-between w-100">
                     <div class="d-flex align-items-center">
                         <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                        <li>@Html.ActionLink("Catalogo", "Catalogo", "Prodotti", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("Menu", "Catalogo", "Prodotti", new { area = "" }, new { @class = "nav-link" })</li>
                         <li><span class="text-warning text-opacity-50 mx-2"> | </span> </li>
                         
                         <li>@Html.ActionLink("Stats", "Stats", "Ordini", new { area = "" }, new { @class = "nav-link" })</li>
-                        <li>@Html.ActionLink("Ordini", "Index", "Ordini", new { area = "" }, new { @class = "nav-link" })</li>
-                        <li>@Html.ActionLink("Gestione Prodotti", "Index", "Prodotti", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("Orders", "Index", "Ordini", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("Manage Pizzas", "Index", "Prodotti", new { area = "" }, new { @class = "nav-link" })</li>
                     </div>
 
 
@@ -64,9 +64,9 @@
                 <div class="d-flex justify-content-between w-100">
                     <div class="d-flex">
                         <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                        <li>@Html.ActionLink("Catalogo", "Catalogo", "Prodotti", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("Menu", "Catalogo", "Prodotti", new { area = "" }, new { @class = "nav-link" })</li>
                         <li class="nav-item">
-                            <a class="nav-link" href="@Url.Action("Details", "Utenti", new { id = Session["UserID"] })">Profilo</a>
+                            <a class="nav-link" href="@Url.Action("Details", "Utenti", new { id = Session["UserID"] })">Your Profile</a>
                         </li>
                     </div>
 

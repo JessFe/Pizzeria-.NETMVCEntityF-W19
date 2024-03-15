@@ -1,7 +1,7 @@
 ﻿@model PizzeriaInForno.Models.SchedaOrdine
 
 @{
-    ViewBag.Title = "Riepilogo Ordine";
+    ViewBag.Title = "Order Preview";
     decimal totaleCarrello = Model.Articoli.Sum(item => item.Quantita * item.Prezzo);
 }
 

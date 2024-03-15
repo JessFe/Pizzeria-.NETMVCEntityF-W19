@@ -18,33 +18,20 @@ namespace PizzeriaInForno.Controllers
             return View();
         }
 
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
-        }
-
+        // GET: Home/Login
         [AllowAnonymous]
         public ActionResult Login()
         {
             return View();
         }
 
-        // modifica 1
-        // modifica 2
+        // POST: Home/Login
         [HttpPost]
         [ValidateAntiForgeryToken]
         [AllowAnonymous]
         public ActionResult Login(Login model)
         {
+            // Verifica la validità del modello
             if (ModelState.IsValid)
             {
                 var user = db.Utenti.FirstOrDefault(u => u.Username == model.Username && u.Password == model.Password);
@@ -53,16 +40,19 @@ namespace PizzeriaInForno.Controllers
                     // Imposta i ruoli per il ticket di autenticazione
                     string roles = user.IsAdmin.GetValueOrDefault() ? "Admin" : "User";
 
+                    // Crea il ticket di autenticazione e lo aggiunge ai cookie
                     var authTicket = new FormsAuthenticationTicket(
-                        1, // version
-                        user.Username, // user name
-                        DateTime.Now, // created
-                        DateTime.Now.AddMinutes(30), // expires
-                        false, // persistent?
-                        roles, // can be used to store roles
+                        1,
+                        user.Username,
+                        DateTime.Now,
+                        DateTime.Now.AddMinutes(30), // scadenza
+                        false, // non persistente
+                        roles,
                         FormsAuthentication.FormsCookiePath);
 
+                    // Cifra il ticket di autenticazione
                     var ticketEncrypted = FormsAuthentication.Encrypt(authTicket);
+                    // Crea un cookie con il ticket cifrato
                     var cookie = new HttpCookie(FormsAuthentication.FormsCookieName, ticketEncrypted);
                     Response.Cookies.Add(cookie);
 

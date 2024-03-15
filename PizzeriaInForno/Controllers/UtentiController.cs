@@ -9,6 +9,7 @@ namespace PizzeriaInForno.Controllers
     [Authorize]
     public class UtentiController : Controller
     {
+        // ModelDbContext è la classe che rappresenta il database
         private ModelDbContext db = new ModelDbContext();
 
         // GET: Utenti
@@ -19,13 +20,14 @@ namespace PizzeriaInForno.Controllers
         }
 
         // GET: Utenti/Details/5
+        // Mostra i dettagli di un utente
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            // Include per caricare anche gli ordini dell'utente
+            // Include: per caricare anche gli ordini dell'utente
             Utenti utenti = db.Utenti.Include(u => u.Ordini).FirstOrDefault(u => u.IDUtente == id);
             if (utenti == null)
             {
@@ -35,6 +37,7 @@ namespace PizzeriaInForno.Controllers
         }
 
         // GET: Utenti/Create
+        // Mostra il form per la creazione di un nuovo utente
         [AllowAnonymous]
         public ActionResult Create()
         {
@@ -44,15 +47,20 @@ namespace PizzeriaInForno.Controllers
         // POST: Utenti/Create
         // Per la protezione da attacchi di overposting, abilitare le proprietà a cui eseguire il binding. 
         // Per altri dettagli, vedere https://go.microsoft.com/fwlink/?LinkId=317598.
+        // Crea un nuovo utente
         [HttpPost]
         [ValidateAntiForgeryToken]
         [AllowAnonymous]
         public ActionResult Create([Bind(Include = "Username,Password,Nome,Cognome,Email,Tel")] Utenti utente)
         {
+            // Verifica la validità del modello
             if (ModelState.IsValid)
             {
-                utente.IsAdmin = false; // Assicura che l'utente non sia un amministratore
+                // Assicura che l'utente non sia un amministratore
+                utente.IsAdmin = false;
+                // Aggiunge l'utente al database
                 db.Utenti.Add(utente);
+                // Salva le modifiche
                 db.SaveChanges();
                 return RedirectToAction("Login", "Home");
             }
@@ -61,6 +69,7 @@ namespace PizzeriaInForno.Controllers
         }
 
         // GET: Utenti/Edit/5
+        // Mostra il form per modificare un utente
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -78,12 +87,15 @@ namespace PizzeriaInForno.Controllers
         // POST: Utenti/Edit/5
         // Per la protezione da attacchi di overposting, abilitare le proprietà a cui eseguire il binding. 
         // Per altri dettagli, vedere https://go.microsoft.com/fwlink/?LinkId=317598.
+        // Modifica un utente
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "IDUtente,Username,Password,IsAdmin,Nome,Cognome,Email,Tel")] Utenti utenti)
         {
+            // Verifica la validità del modello
             if (ModelState.IsValid)
             {
+                // Modifica l'utente nel database
                 db.Entry(utenti).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Details", new { id = utenti.IDUtente });

@@ -70,6 +70,5 @@ textarea {
 
     .carousel-item h5,
     .carousel-item p {
-        /*background: radial-gradient(circle, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.2) 30%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0) 10%);*/
         text-shadow: 0 0 12px #000, 0 0 7px #000, 0 0 4px #000, 0 0 2px #000;
     }

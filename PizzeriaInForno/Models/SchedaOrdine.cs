@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace PizzeriaInForno.Models
 {
@@ -7,7 +8,11 @@ namespace PizzeriaInForno.Models
     public class SchedaOrdine
     {
         public List<DettaglioCarrello> Articoli { get; set; }
+
+        [Display(Name = "Address")]
         public string Indirizzo { get; set; }
+
+        [Display(Name = "Notes")]
         public string Note { get; set; }
     }
 }

@@ -6,11 +6,13 @@ using System.Web.Mvc;
 
 namespace PizzeriaInForno.Controllers
 {
+    [Authorize]
     public class UtentiController : Controller
     {
         private ModelDbContext db = new ModelDbContext();
 
         // GET: Utenti
+        [Authorize(Roles = "Admin")]
         public ActionResult Index()
         {
             return View(db.Utenti.ToList());
@@ -33,6 +35,7 @@ namespace PizzeriaInForno.Controllers
         }
 
         // GET: Utenti/Create
+        [AllowAnonymous]
         public ActionResult Create()
         {
             return View();
@@ -43,6 +46,7 @@ namespace PizzeriaInForno.Controllers
         // Per altri dettagli, vedere https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public ActionResult Create([Bind(Include = "Username,Password,Nome,Cognome,Email,Tel")] Utenti utente)
         {
             if (ModelState.IsValid)
@@ -88,6 +92,7 @@ namespace PizzeriaInForno.Controllers
         }
 
         // GET: Utenti/Delete/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -105,6 +110,7 @@ namespace PizzeriaInForno.Controllers
         // POST: Utenti/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult DeleteConfirmed(int id)
         {
             Utenti utenti = db.Utenti.Find(id);

@@ -1,10 +1,8 @@
 namespace PizzeriaInForno.Models
 {
-    using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using System.Data.Entity.Spatial;
 
     [Table("Prodotti")]
     public partial class Prodotti
@@ -18,16 +16,21 @@ namespace PizzeriaInForno.Models
         [Key]
         public int IDProdotto { get; set; }
 
+        [Display(Name = "Pizza")]
         [Required]
         [StringLength(100)]
         public string NomeProd { get; set; }
 
+        [Display(Name = "Pic")]
         public string Foto { get; set; }
 
+        [Display(Name = "Price")]
         public decimal Prezzo { get; set; }
 
+        [Display(Name = "Time")]
         public int ConsMin { get; set; }
 
+        [Display(Name = "Ingredients")]
         public string Ingredienti { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

@@ -34,10 +34,12 @@ namespace PizzeriaInForno.Models
 
         public bool? IsAdmin { get; set; }
 
+        [Display(Name = "First Name")]
         [Required]
         [StringLength(50)]
         public string Nome { get; set; }
 
+        [Display(Name = "Last Name")]
         [Required]
         [StringLength(50)]
         public string Cognome { get; set; }

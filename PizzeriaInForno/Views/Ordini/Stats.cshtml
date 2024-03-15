@@ -1,0 +1,66 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Stats";
+}
+
+<h2>Stats</h2>
+
+<div class="d-flex flex-column align-items-center">
+
+    <div class="border border-2 border-warning bg-warning bg-opacity-10 rounded-3 w-75 p-3 my-3">
+        <button id="loadTotalOrdersEvasi" class="btn btn-warning btn-cst-red">All-Time Orders</button>
+
+        <div id="totalOrdersEvasiResult" class="mt-4" style="display: none;">
+            <p>Total orders: <span id="totalOrdersEvasi">0</span></p>
+        </div>
+    </div>
+
+    <div class="border border-2 border-warning bg-warning bg-opacity-10 rounded-3 w-75 p-3 my-3">
+        <div class="form-group">
+            <label for="reportDate">Choose a date:</label>
+            <input type="date" id="reportDate" name="reportDate" class="form-control" />
+        </div>
+
+        <button id="loadReport" class="btn btn-warning btn-cst-red mt-2">Daily Report</button>
+
+        <div id="dailyreport" class="mt-4" style="display: none;">
+            <p>Fulfilled orders: <span id="totalOrders">0</span></p>
+            <p>Total collected: $<span id="totalEarnings">0.00</span></p>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jquery")
+    <script>
+        $(document).ready(function () {
+            $('#loadReport').click(function () {
+                var selectedDate = $('#reportDate').val();
+
+                $.getJSON('/Ordini/GetTotalOrders', { date: selectedDate }, function (data) {
+                    $('#totalOrders').text(data);
+                    $('#dailyreport').show();
+                });
+
+                $.getJSON('/Ordini/GetTotalEarnings', { date: selectedDate }, function (data) {
+                    $('#totalEarnings').text(data.toFixed(2));
+                    $('#dailyreport').show();
+                });
+            });
+
+            $('#loadTotalOrdersEvasi').click(function () {
+                $.getJSON('/Ordini/GetTotalOrdersEvasi', function (data) {
+                    $('#totalOrdersEvasi').text(data);
+                    $('#totalOrdersEvasiResult').show(); // Mostra il div con il risultato
+                });
+            });
+        });
+    </script>
+}

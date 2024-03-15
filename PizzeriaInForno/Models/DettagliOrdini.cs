@@ -1,10 +1,7 @@
 namespace PizzeriaInForno.Models
 {
-    using System;
-    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using System.Data.Entity.Spatial;
 
     [Table("DettagliOrdini")]
     public partial class DettagliOrdini
@@ -16,6 +13,7 @@ namespace PizzeriaInForno.Models
 
         public int? FK_IDProdotto { get; set; }
 
+        [Display(Name = "Quantity")]
         public int Quantita { get; set; }
 
         public virtual Ordini Ordini { get; set; }

@@ -5,17 +5,18 @@
     decimal totaleCarrello = Model.Articoli.Sum(item => item.Quantita * item.Prezzo);
 }
 
-<h2>Riepilogo del tuo Ordine</h2>
+<h2>Your <span class="text-cst-red">order preview</span></h2>
 
 @using (Html.BeginForm("AggiornaCarrello", "Ordini", FormMethod.Post))
 {
-    <table class="table">
+    <table class="table my-4">
         <thead>
             <tr>
-                <th>Prodotto</th>
-                <th>Quantità</th>
-                <th>Prezzo</th>
-                <th>Totale</th>
+                <th>Pizzas</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -27,36 +28,37 @@
                         @Html.HiddenFor(m => m.Articoli[i].IDProdotto)
                         @Html.TextBoxFor(m => m.Articoli[i].Quantita, new { @class = "form-control", type = "number", min = "1" })
                     </td>
-                    <td>@Model.Articoli[i].Prezzo €</td>
-                    <td>@(Model.Articoli[i].Quantita * Model.Articoli[i].Prezzo) €</td>
+                    <td>$ @Model.Articoli[i].Prezzo</td>
+                    <td>$ @(Model.Articoli[i].Quantita * Model.Articoli[i].Prezzo)</td>
                     <td>
-                        <button type="submit" formaction="@Url.Action("RimuoviDalCarrello", "Ordini", new { index = i })" class="btn btn-danger btn-sm">Rimuovi</button>
+                        <button type="submit" formaction="@Url.Action("RimuoviDalCarrello", "Ordini", new { index = i })" class="btn btn-danger btn-cst-red btn-sm"><i class="bi bi-x-square"></i></button>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
 
-    <button type="submit" class="btn btn-secondary">Aggiorna Carrello</button>
+    <button type="submit" class="btn btn-warning btn-cst-red"><i class="bi bi-basket"></i> Update</button>
 }
 
 
 
-<div class="total-carrello">
-    <strong>Totale Carrello: @totaleCarrello €</strong>
+<div class="total-carrello my-4">
+    <strong>Checkout: $ @totaleCarrello</strong>
 </div>
 
 @using (Html.BeginForm("Conferma", "Ordini", FormMethod.Post))
 {
     @Html.AntiForgeryToken()
 
-    <div class="form-group">
-        <label for="indirizzo">Indirizzo di Spedizione</label>
-        <input type="text" class="form-control" id="indirizzo" name="indirizzo" required>
+<hr />
+    <div class="form-group my-4">
+        <label for="indirizzo">Delivery address</label>
+        <input type="text" class="form-control" id="indirizzo" name="indirizzo" placeholder="e.g. Viale Italia 1, 20100 Milan" required>
     </div>
-    <div class="form-group">
-        <label for="note">Note</label>
-        <textarea class="form-control" id="note" name="note" rows="3"></textarea>
+    <div class="form-group my-3">
+        <label for="note">Notes from you</label>
+        <textarea class="form-control" id="note" name="note" rows="3" placeholder="Got special instructions? Drop them in here!"></textarea>
     </div>
-    <button type="submit" class="btn btn-primary">Conferma Ordine</button>
+    <button type="submit" class="btn btn-warning btn-cst-red my-3"><i class="bi bi-check2-square"></i> Confirm & Submit</button>
 }

@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using PizzeriaInForno.Models;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using PizzeriaInForno.Models;
 
 namespace PizzeriaInForno.Controllers
 {
+    [Authorize]
     public class DettagliOrdiniController : Controller
     {
         private ModelDbContext db = new ModelDbContext();

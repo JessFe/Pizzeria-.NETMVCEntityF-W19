@@ -4,102 +4,93 @@
     ViewBag.Title = "Details";
 }
 
-<h2>Details</h2>
+<h2>Your <span class="text-cst-red">profile</span></h2>
 
 <div>
-    <h4>Utenti</h4>
+
     <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Username)
-        </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Username)
-        </dd>
+    <div class="d-flex justify-content-between my-4">
+        <div class="d-flex">
+            <div class="d-flex flex-column fw-semibold px-3">
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Password)
-        </dt>
+                <p>@Html.DisplayNameFor(model => model.Username)</p>
+                <p>@Html.DisplayNameFor(model => model.Password)</p>
+                <p>@Html.DisplayNameFor(model => model.Nome)</p>
+                <p>@Html.DisplayNameFor(model => model.Cognome)</p>
+                <p>@Html.DisplayNameFor(model => model.Email)</p>
+                <p>@Html.DisplayNameFor(model => model.Tel)</p>
 
-        <dd>
-            @Html.DisplayFor(model => model.Password)
-        </dd>
+            </div>
+
+            <div class="flex-column px-3">
+                <p>@Html.DisplayFor(model => model.Username)</p>
+                <p>*******</p>
+                <p>@Html.DisplayFor(model => model.Nome)</p>
+                <p>@Html.DisplayFor(model => model.Cognome)</p>
+                <p>@Html.DisplayFor(model => model.Email)</p>
+                <p>@Html.DisplayFor(model => model.Tel)</p>
+            </div>
+        </div>
 
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Nome)
-        </dt>
+    </div>
 
-        <dd>
-            @Html.DisplayFor(model => model.Nome)
-        </dd>
+    <p>
+        <a href="@Url.Action("Edit", new { id = Model.IDUtente })" class="btn btn-warning btn-cst-red">
+            <i class="bi bi-pencil-square"></i> Edit
+        </a>
+    </p>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Cognome)
-        </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Cognome)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Tel)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Tel)
-        </dd>
-
-    </dl>
-</div>
-
-<h2>Ordini effettuati</h2>
-@if (Model.Ordini != null && Model.Ordini.Any())
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>ID Ordine</th>
-                <th>Data Ordine</th>
-                <th>Indirizzo</th>
-                <th>Stato</th>
-                <th>Totale</th>
-                <th>Azioni</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var ordine in Model.Ordini)
-            {
+    <hr />
+    <h2>Your <span class="text-cst-red">orders</span></h2>
+    @if (Model.Ordini != null && Model.Ordini.Any())
+    {
+        <table class="table my-4">
+            <thead>
                 <tr>
-                    <td>@ordine.IDOrdine</td>
-                    <td>@ordine.DataOrdine</td>
-                    <td>@ordine.Indirizzo</td>
-                    <td>@(ordine.Evaso.HasValue && ordine.Evaso.Value ? "Evaso" : "In attesa")</td>
-                    <td>@ordine.DettagliOrdini.Sum(d => d.Quantita * d.Prodotti.Prezzo) €</td>
-                    <td>
-                        @Html.ActionLink("Dettagli", "Details", "Ordini", new { id = ordine.IDOrdine }, new { @class = "btn btn-info" })
-                    </td>
+                    <th>#Order</th>
+                    <th>Order Date</th>
+                    <th>Address</th>
+                    <th>Status</th>
+                    <th>Total</th>
+                    <th></th>
                 </tr>
-            }
-        </tbody>
-    </table>
-}
-else
-{
-    <p>Nessun ordine effettuato.</p>
-}
+            </thead>
+            <tbody>
+                @foreach (var ordine in Model.Ordini)
+                {
+                    <tr>
+                        <td>@ordine.IDOrdine</td>
+                        <td>@ordine.DataOrdine</td>
+                        <td>@ordine.Indirizzo</td>                        
+                        <td>
+                            @if (ordine.Evaso.HasValue && ordine.Evaso.Value)
+                            {
+                                @:✓
+                            }
+                            else
+                            {
+                                <span class="text-warning fw-semibold">Pending</span>
+                            }
+                        </td>
+                        <td>$ @ordine.DettagliOrdini.Sum(d => d.Quantita * d.Prodotti.Prezzo)</td>
+                        <td>
+                            <a href="@Url.Action("Details", "Ordini", new { id = ordine.IDOrdine })" class="btn btn-warning btn-cst-red">
+                                <i class="bi bi-info-square"></i>
+                            </a>
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Feeling hungry? Place your first order!</p>
+    }
 
 
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.IDUtente }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+

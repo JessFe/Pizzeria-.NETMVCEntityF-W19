@@ -4,18 +4,17 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
+<h2>Orders</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
+
+<table class="table mt-4">
     <tr>
-        <th>Data Ordine</th>
-        <th>Cliente</th>
-        <th>Indirizzo</th>
-        <th>Stato</th>
-        <th>Azioni</th>
+        <th>Order Date</th>
+        <th>Customer</th>
+        <th>Address</th>
+        <th>Status</th>
+        <th>Notes</th>
+        <th></th>
     </tr>
 
     @foreach (var ordine in Model)
@@ -24,23 +23,40 @@
             <td>@ordine.DataOrdine</td>
             <td>@ordine.Utenti.Nome @ordine.Utenti.Cognome</td>
             <td>@ordine.Indirizzo</td>
-            <td>@(ordine.Evaso.HasValue && ordine.Evaso.Value ? "Evaso" : "In attesa")</td>
-
             <td>
-                @if (!ordine.Evaso.HasValue || !ordine.Evaso.Value) // Se Evaso è null o false, mostra il link
+                @if (ordine.Evaso.HasValue && ordine.Evaso.Value)
                 {
-                    @Html.ActionLink("Evaso", "Evaso", new { id = ordine.IDOrdine }, new { @class = "btn btn-success" })
-                    @Html.ActionLink("Dettagli", "Details", new { id = ordine.IDOrdine }, new { @class = "btn btn-info" })
-                    @Html.ActionLink("Elimina", "Delete", new { id = ordine.IDOrdine }, new { @class = "btn btn-danger", onclick = "return confirm('Sei sicuro di voler eliminare questo ordine?');" })
-
-
+                    @:✓
                 }
                 else
                 {
-                    @Html.ActionLink("In attesa", "Evaso", new { id = ordine.IDOrdine }, new { @class = "btn btn-success" })
-                    @Html.ActionLink("Dettagli", "Details", new { id = ordine.IDOrdine }, new { @class = "btn btn-info" })
+                    <span class="text-warning fw-semibold">Pending</span>
                 }
             </td>
+            <td>
+                @if (!string.IsNullOrWhiteSpace(ordine.Note))
+                {
+                    <span class="text-warning" style="text-shadow: 0 0 1px #f00;"><i class="bi bi-pencil-fill"></i></span> <!-- Indica la presenza di note -->
+                }
+                else
+                {
+                    <span><i class="bi bi-x"></i></span> <!-- Indica l'assenza di note -->
+                }
+            </td>
+            <td>
+                @if (!ordine.Evaso.HasValue || !ordine.Evaso.Value) // Se Evaso è null o false, mostra il link
+                {
+                    <a href="@Url.Action("Evaso", new { id = ordine.IDOrdine })" class="btn btn-success"><i class="bi bi-check2-square"></i></a>
+                    <a href="@Url.Action("Details", new { id = ordine.IDOrdine })" class="btn btn-warning mx-2"><i class="bi bi-info-square"></i></a>
+                    <a href="@Url.Action("Delete", new { id = ordine.IDOrdine })" class="btn btn-danger btn-cst-red"><i class="bi bi-x-square"></i></a>
+                }
+                else
+                {
+                    <a href="@Url.Action("Evaso", new { id = ordine.IDOrdine })" class="btn btn-secondary"><i class="bi bi-hourglass-bottom"></i></a>
+                    <a href="@Url.Action("Details", new { id = ordine.IDOrdine })" class="btn btn-warning mx-2"><i class="bi bi-info-square"></i></a>
+                }
+            </td>
+
         </tr>
     }
 </table>

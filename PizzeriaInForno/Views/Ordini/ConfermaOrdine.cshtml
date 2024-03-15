@@ -4,28 +4,51 @@
     ViewBag.Title = "Conferma dell'Ordine";
 }
 
-<h2>Conferma dell'Ordine</h2>
+<h2>Order <span class="text-cst-red">confirmed</span>!</h2>
 
-<div class="thank-you">
-    <p>Grazie per il tuo ordine, @Model.Utenti.Nome!</p>
-    <p>Un riepilogo del tuo ordine:</p>
+<div class="">
 
-    <div>
-        <strong>Indirizzo di spedizione:</strong> @Model.Indirizzo
-    </div>
-    <div>
-        <strong>Note:</strong> @Model.Note
+    <div class="fs-5 my-4">
+        <p class="m-0">Thanks for your order, @Model.Utenti.Nome! ❤️</p>
+        <p class="m-0">We'll be there in about <span class="text-cst-red fs-4">@ViewBag.TempoStimatoConsegna</span> minutes.</p>
     </div>
 
-    <h3>Articoli Ordinati:</h3>
-    <ul>
-        @foreach (var item in Model.DettagliOrdini)
-        {
-            <li>@item.Prodotti.NomeProd - Quantità: @item.Quantita - Prezzo: @item.Prodotti.Prezzo €</li>
-        }
-    </ul>
 
-    <div>
-        <strong>Totale Ordine:</strong> @Model.DettagliOrdini.Sum(item => item.Quantita * item.Prodotti.Prezzo) €
+    <div class="py-3 my-4">
+        <h5>Here's a recap:</h5>
+        <div class="ms-3">
+            <span class="text-dark text-opacity-75 fw-semibold">Your choices:</span>
+            <ul>
+                @foreach (var item in Model.DettagliOrdini)
+                {
+                    <li>@item.Prodotti.NomeProd x @item.Quantita - $ @(item.Quantita * item.Prodotti.Prezzo)</li>
+                }
+            </ul>
+
+            <div class="mb-3">
+                <span class="text-dark text-opacity-75 fw-semibold me-3">Total:</span>$ @Model.DettagliOrdini.Sum(item => item.Quantita * item.Prodotti.Prezzo)
+            </div>
+
+            <div>
+                <span class="text-dark text-opacity-75 fw-semibold me-2">Address:</span> @Model.Indirizzo
+            </div>
+            <div>
+                <span class="text-dark text-opacity-75 fw-semibold me-3">Notes:</span> @Model.Note
+                @if (!string.IsNullOrWhiteSpace(@Model.Note))
+                {
+                    <span>@Model.Note</span>
+                }
+                else
+                {
+                    <span> - </span>
+                }
+            </div>
+
+        </div>
+
     </div>
+    
+
+    <p class="fs-5 pb-3 mx-0 my-4">Enjoy your meal! 🍕</p>
+
 </div>

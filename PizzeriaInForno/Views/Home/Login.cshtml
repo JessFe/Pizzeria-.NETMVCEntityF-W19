@@ -9,20 +9,26 @@
 {
     @Html.AntiForgeryToken()
 
-    <div class="form-group">
+    <div class="form-group my-3">
         @Html.LabelFor(m => m.Username)
         @Html.TextBoxFor(m => m.Username, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Username, "", new { @class = "text-danger" })
     </div>
 
-    <div class="form-group">
+    <div class="form-group my-3">
         @Html.LabelFor(model => model.Password)
         @Html.PasswordFor(model => model.Password, new { @class = "form-control" })
-
+        @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
     </div>
 
-    <button type="submit" class="btn btn-primary">Login</button>
+    @Html.ValidationSummary(true, "", new { @class = "text-danger my-3" })
+
+    <button type="submit" class="btn btn-warning btn-cst-red my-3">Login</button>
+
+
 }
 
-<p>
-    Nuovo utente? @Html.ActionLink("Clicca qui", "Create", "Utenti")
+<p class="mb-5">
+    New around here? <a href="@Url.Action("Create", "Utenti")" class="text-cst-red fw-semibold">Click here</a> to jump in!
 </p>
+

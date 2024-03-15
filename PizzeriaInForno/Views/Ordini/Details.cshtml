@@ -5,75 +5,104 @@
     decimal totaleOrdine = 0;
 }
 
-<h2>Details</h2>
+<h2>Order info</h2>
 
 <div>
-    <h4>Ordini</h4>
     <hr />
-    <dl class="dl-horizontal">
-        <dt>@Html.DisplayNameFor(model => model.IDOrdine)</dt>
-        <dd>@Html.DisplayFor(model => model.IDOrdine)</dd>
 
-        <dt>@Html.DisplayNameFor(model => model.Utenti.Username)</dt>
-        <dd>@Html.DisplayFor(model => model.Utenti.Username)</dd>
+    <div class="d-flex justify-content-between my-4">
+        <div class="d-flex">
+            <div class="d-flex flex-column fw-semibold px-3">
+                <p>#Order</p>
+                <p>@Html.DisplayNameFor(model => model.Utenti.Username)</p>
+                <p>@Html.DisplayNameFor(model => model.Utenti.Cognome)</p>
+                <p>@Html.DisplayNameFor(model => model.Utenti.Nome)</p>
+                <br />
 
-        <dt>@Html.DisplayNameFor(model => model.Utenti.Cognome)</dt>
-        <dd>@Html.DisplayFor(model => model.Utenti.Cognome)</dd>
+                <p>@Html.DisplayNameFor(model => model.Evaso)</p>
+                <p>@Html.DisplayNameFor(model => model.DataOrdine)</p>
+                <p>@Html.DisplayNameFor(model => model.Indirizzo)</p>
+                <p>@Html.DisplayNameFor(model => model.Utenti.Tel)</p>
+                <p>@Html.DisplayNameFor(model => model.Note)</p>
 
-        <dt>@Html.DisplayNameFor(model => model.Utenti.Nome)</dt>
-        <dd>@Html.DisplayFor(model => model.Utenti.Nome)</dd>
+            </div>
+            <div class="flex-column px-3">
+                <p>@Html.DisplayFor(model => model.IDOrdine)</p>
+                <p>@Html.DisplayFor(model => model.Utenti.Username)</p>
+                <p>@Html.DisplayFor(model => model.Utenti.Cognome)</p>
+                <p>@Html.DisplayFor(model => model.Utenti.Nome)</p>
+                <br
 
-        <dt>@Html.DisplayNameFor(model => model.Utenti.Tel)</dt>
-        <dd>@Html.DisplayFor(model => model.Utenti.Tel)</dd>
+                <p>@(Model.Evaso.HasValue ? (Model.Evaso.Value ? "Evaso" : "In attesa") : "")</p>
+                <p>@Html.DisplayFor(model => model.DataOrdine)</p>
+                <p>@Html.DisplayFor(model => model.Indirizzo)</p>
+                <p>@Html.DisplayFor(model => model.Utenti.Tel)</p>
+                <p>
+                    @if (String.IsNullOrEmpty(Model.Note))
+                    {
+                        @:-
+                    }
+                    else
+                    {
+                        @Html.DisplayFor(model => model.Note)
+                    }
+                </p>
 
-        <dt>@Html.DisplayNameFor(model => model.DataOrdine)</dt>
-        <dd>@Html.DisplayFor(model => model.DataOrdine)</dd>
 
-        <dt>@Html.DisplayNameFor(model => model.Indirizzo)</dt>
-        <dd>@Html.DisplayFor(model => model.Indirizzo)</dd>
 
-        <dt>@Html.DisplayNameFor(model => model.Note)</dt>
-        <dd>@Html.DisplayFor(model => model.Note)</dd>
+            </div>
+        </div>
 
-        <dt>@Html.DisplayNameFor(model => model.Evaso)</dt>
-        <dd>@(Model.Evaso.HasValue ? (Model.Evaso.Value ? "Evaso" : "In attesa") : "")</dd>
 
-    </dl>
-</div>
+    </div>
+    @if ((Session["IsAdmin"] as bool?) ?? false)
+    {
+        <p>
+            <a href="@Url.Action("Index")" class="btn btn-warning btn-cst-red">
+                <i class="bi bi-arrow-left-square"></i> Orders
+            </a>
+        </p>
+    }
+    else
+    {
+        <p>
+            <a href="@Url.Action("Details", "Utenti", new { id = Session["UserID"] })" class="btn btn-warning btn-cst-red"><i class="bi bi-arrow-left-square"></i> Profile</a>
+        </p>
+    }
+<hr />
 
-<h3>Prodotti Ordinati</h3>
-@if (Model.DettagliOrdini != null && Model.DettagliOrdini.Any())
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Prodotto</th>
-                <th>Quantità</th>
-                <th>Prezzo Unitario</th>
-                <th>Totale</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.DettagliOrdini)
-            {
+    <h3>Details</h3>
+    @if (Model.DettagliOrdini != null && Model.DettagliOrdini.Any())
+    {
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>@item.Prodotti.NomeProd</td>
-                    <td>@item.Quantita</td>
-                    <td>@item.Prodotti.Prezzo €</td>
-                    <td>@(item.Quantita * item.Prodotti.Prezzo) €</td>
+                    <th>Pizzas</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
                 </tr>
-                totaleOrdine += item.Quantita * item.Prodotti.Prezzo;
-            }
-        </tbody>
-    </table>
-    <h4>Totale Ordine: @totaleOrdine €</h4>
-}
-else
-{
-    <p>Nessun prodotto ordinato.</p>
-}
+            </thead>
+            <tbody>
+                @foreach (var item in Model.DettagliOrdini)
+                {
+                    <tr>
+                        <td>@item.Prodotti.NomeProd</td>
+                        <td>@item.Quantita</td>
+                        <td>$ @item.Prodotti.Prezzo</td>
+                        <td>$ @(item.Quantita * item.Prodotti.Prezzo)</td>
+                    </tr>
+                    totaleOrdine += item.Quantita * item.Prodotti.Prezzo;
+                }
+            </tbody>
+        </table>
+        <h6 class="my-4">Checkout: $ @totaleOrdine</h6>
+    }
+    else
+    {
+        <p>Nessun prodotto ordinato.</p>
+    }
 
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.IDOrdine }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+
+
+

@@ -8,11 +8,13 @@ using System.Web.Mvc;
 
 namespace PizzeriaInForno.Controllers
 {
+    [Authorize]
     public class OrdiniController : Controller
     {
         private ModelDbContext db = new ModelDbContext();
 
         // GET: Ordini
+        [Authorize(Roles = "Admin")]
         public ActionResult Index()
         {
             // Ottieni tutti gli ordini NON EVASI e ordina per data, vecchi in cima
@@ -34,7 +36,7 @@ namespace PizzeriaInForno.Controllers
         }
 
         // GET Ordini/Evaso/5
-
+        [Authorize(Roles = "Admin")]
         public ActionResult Evaso(int id)
         {
             var ordine = db.Ordini.Find(id);
@@ -51,7 +53,7 @@ namespace PizzeriaInForno.Controllers
             return HttpNotFound();
         }
 
-        // GET: Ordini/Details/5
+        // GET: Ordini/Details/5        
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -92,6 +94,7 @@ namespace PizzeriaInForno.Controllers
         }
 
         // GET: Ordini/Edit/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -112,6 +115,7 @@ namespace PizzeriaInForno.Controllers
         // Per altri dettagli, vedere https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit([Bind(Include = "IDOrdine,FK_IDUtente,DataOrdine,Indirizzo,Note,Evaso")] Ordini ordini)
         {
             if (ModelState.IsValid)
@@ -125,6 +129,7 @@ namespace PizzeriaInForno.Controllers
         }
 
         // GET: Ordini/Delete/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -267,6 +272,33 @@ namespace PizzeriaInForno.Controllers
                 return HttpNotFound();
             }
 
+            int tempoConsegnaBase = 30;
+            int tempoExtraPerQuantita = 0;
+            int quantitaTotale = ordine.DettagliOrdini.Sum(d => d.Quantita);
+            int tempoMassimoPreparazione = ordine.DettagliOrdini.Max(d => d.Prodotti.ConsMin);
+
+            // Aggiungi tempo extra basato sul numero totale di pizze
+            //   extra: +15 minuti oltre 10 pizze, +30 min oltre 20 pizze, +45 min oltre 30 pizze
+            if (quantitaTotale > 30)
+            {
+                tempoExtraPerQuantita += 45;
+            }
+            else if (quantitaTotale > 20)
+            {
+                tempoExtraPerQuantita += 30;
+            }
+            else if (quantitaTotale > 10)
+            {
+                tempoExtraPerQuantita += 15;
+            }
+
+            int tempoStimatoConsegna = Math.Max(tempoConsegnaBase, tempoMassimoPreparazione) + tempoExtraPerQuantita;
+
+            System.Diagnostics.Debug.WriteLine($"Tempo stimato consegna: {tempoStimatoConsegna}");
+
+            // Passa il tempo stimato alla vista
+            ViewBag.TempoStimatoConsegna = tempoStimatoConsegna;
+
             return View(ordine);
         }
 
@@ -308,6 +340,39 @@ namespace PizzeriaInForno.Controllers
             return RedirectToAction("Riepilogo");
         }
 
+        [Authorize(Roles = "Admin")]
+        public ActionResult Stats()
+        {
+            return View();
+        }
+
+        // Chiamate asincrone per ottenere i report
+
+        public JsonResult GetTotalOrdersEvasi()
+        {
+            var totalOrdersEvasi = db.Ordini
+                                     .Count(o => o.Evaso == true);
+
+            return Json(totalOrdersEvasi, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult GetTotalOrders(DateTime date)
+        {
+            var totalOrders = db.Ordini
+                                .Count(o => DbFunctions.TruncateTime(o.DataOrdine) == date.Date && o.Evaso == true);
+
+            return Json(totalOrders, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult GetTotalEarnings(DateTime date)
+        {
+            var totalEarnings = db.Ordini
+                                  .Where(o => DbFunctions.TruncateTime(o.DataOrdine) == date.Date && o.Evaso == true)
+                                  .SelectMany(o => o.DettagliOrdini)
+                                  .Sum(d => (decimal?)d.Quantita * d.Prodotti.Prezzo) ?? 0;
+
+            return Json(totalEarnings, JsonRequestBehavior.AllowGet);
+        }
 
 
     }

@@ -222,6 +222,7 @@
     <Content Include="Views\Prodotti\Catalogo.cshtml" />
     <Content Include="Views\Ordini\Riepilogo.cshtml" />
     <Content Include="Views\Ordini\ConfermaOrdine.cshtml" />
+    <Content Include="Views\Ordini\Stats.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

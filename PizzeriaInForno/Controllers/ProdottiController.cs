@@ -1,5 +1,4 @@
 ﻿using PizzeriaInForno.Models;
-using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -8,11 +7,13 @@ using System.Web.Mvc;
 
 namespace PizzeriaInForno.Controllers
 {
+    [Authorize]
     public class ProdottiController : Controller
     {
         private ModelDbContext db = new ModelDbContext();
 
         // GET: Prodotti
+        [Authorize(Roles = "Admin")]
         public ActionResult Index()
         {
             var prodOrdineAlfabetico = db.Prodotti.OrderBy(p => p.NomeProd).ToList();
@@ -35,6 +36,7 @@ namespace PizzeriaInForno.Controllers
         }
 
         // GET: Prodotti/Create
+        [Authorize(Roles = "Admin")]
         public ActionResult Create()
         {
             return View();
@@ -45,6 +47,7 @@ namespace PizzeriaInForno.Controllers
         // Per altri dettagli, vedere https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult Create([Bind(Include = "IDProdotto,NomeProd,Prezzo,ConsMin,Ingredienti")] Prodotti prodotti, HttpPostedFileBase file)
         {
             if (ModelState.IsValid)
@@ -68,6 +71,7 @@ namespace PizzeriaInForno.Controllers
         }
 
         // GET: Prodotti/Edit/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -87,16 +91,38 @@ namespace PizzeriaInForno.Controllers
         // Per altri dettagli, vedere https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "IDProdotto,NomeProd,Foto,Prezzo,ConsMin,Ingredienti")] Prodotti prodotti)
+        [Authorize(Roles = "Admin")]
+        public ActionResult Edit([Bind(Include = "IDProdotto,NomeProd,Prezzo,ConsMin,Ingredienti")] Prodotti prodotti, HttpPostedFileBase file)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(prodotti).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                var prodottoToUpdate = db.Prodotti.Find(prodotti.IDProdotto);
+                if (prodottoToUpdate != null)
+                {
+                    // Verifica se un nuovo file è stato caricato
+                    if (file != null && file.ContentLength > 0)
+                    {
+                        // Salva il nuovo file
+                        var fileName = Path.GetFileName(file.FileName);
+                        var path = Path.Combine(Server.MapPath("~/Content/assets/img"), fileName);
+                        file.SaveAs(path);
+
+                        // Aggiorna il percorso del file nel database solo se un nuovo file è stato caricato
+                        prodottoToUpdate.Foto = fileName;
+                    }
+                    // Aggiorna gli altri campi
+                    prodottoToUpdate.NomeProd = prodotti.NomeProd;
+                    prodottoToUpdate.Prezzo = prodotti.Prezzo;
+                    prodottoToUpdate.ConsMin = prodotti.ConsMin;
+                    prodottoToUpdate.Ingredienti = prodotti.Ingredienti;
+
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
             }
             return View(prodotti);
         }
+
 
         // GET: Prodotti/Delete/5
         public ActionResult Delete(int? id)

@@ -5,9 +5,11 @@
 }
 
 <h2>Pizzas</h2>
+<div class="d-flex justify-content-end">
+    <a href="@Url.Action("Create", "Prodotti")" class="btn btn-warning btn-cst-red px-3"><i class="bi bi-plus-square"></i> Add a Pizza</a>
+</div>
 
-
-<table class="table my-4">
+<table class="table my-3">
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.NomeProd)
